@@ -27,7 +27,7 @@
 <body>
     <header>
         <h1>
-            <a href="{{ site.baseurl }}/"><img src="{{ site.baseurl }}/logo.v108.svg" width="40" height="40"
+            <a href="{{ site.baseurl }}/"><img src="{{ site.baseurl }}/logo.v109.svg" width="40" height="40"
                     alt="{{ site.title }} logo"></a>
             {{ site.title }}
             <button type="button" class="open-nav" id="open-nav"></button>
@@ -44,18 +44,46 @@
             </ul>
 
             <ul>
-                {% assign grouped = site.docs | group_by: 'category' %}
-                {% for group in grouped %}
-                <li class="nav-item top-level {% if group.name == page.category %}current{% endif %}">
-                    {% assign items = group.items | sort: 'order' %}
-                    <a href="{{ site.baseurl }}{{ items.first.url }}">{{ group.name }}</a>
-                    <ul>
-                        {% for item in items %}
-                        <li class="nav-item {% if item.url == page.url %}current page{% endif %}"><a
-                                href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
-                        {% endfor %}
-                    </ul>
-                </li>
+                {% assign grouped = site.docs | where_exp:"item", "item.layout != 'redirect'" | where_exp:"item", "item.hideFromNav != true" | where_exp:"item", "item.isIndex != true" | group_by: 'category' %}
+                {% for category in site.categories_data %}
+                    {% assign group = grouped | where: 'name', category.name | first %}
+                    {% assign hasSubcategories = category.sub_categories %}
+                    {% if group or hasSubcategories %}
+                    <li class="nav-item top-level {% if category.name == page.category %}current{% endif %}">
+                        <a href="{{ site.baseurl }}{{ category.path }}">{{ category.name }}</a>
+                        <ul>
+                            {% if group.items %}
+                                {% assign items = group.items | where_exp:"item", "item.sub_category == undefined" | sort: 'order' %}
+                                {% for item in items %}
+                                <li class="nav-item {% if item.url == page.url %}current page{% endif %}"><a
+                                        href="{{ site.baseurl }}{{ item.url }}">
+                                        {% if item.nav_title %}{{ item.nav_title }}{% else %}{{ item.title }}{% endif %}
+                                    </a></li>
+                                {% endfor %}
+                            {% endif %}
+
+                            <!-- Sub-categories -->
+                            {% for subcat in category.sub_categories %}
+                                <!-- get docs for each subcategory -->
+                                <li class="nav-item second-level {% if subcat.name == page.sub_category %}current{% endif %}">
+                                    <a href="{{ site.baseurl }}{{ subcat.path }}">{{ subcat.name }}</a>
+                                    <ul>
+                                        {% assign sub_group = group.items | where_exp:"item", "item.sub_category == subcat.name" %}
+                                        {% if sub_group %}
+                                            {% assign sub_group = sub_group | sort: 'order' %}
+                                        {% endif %}
+                                        {% for item in sub_group %}
+                                        <li class="nav-item {% if item.url == page.url %}current page{% endif %}"><a
+                                                href="{{ site.baseurl }}{{ item.url }}">
+                                                {% if item.nav_title %}{{ item.nav_title }}{% else %}{{ item.title }}{% endif %}
+                                            </a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    {% endif %}
                 {% endfor %}
             </ul>
         </nav>
@@ -63,7 +91,24 @@
 
     <section class="main">
         <div class="page-header">
-            <h2>{% if page.category %}{{ page.category }}{% else %}{{ site.title }}{% endif %}</h2>
+            <h2>
+                {% assign pageCategory = site.categories_data | where_exp: "category", "category.name == page.category" | first %}
+                {% assign pageSubCategory = pageCategory.sub_categories | where_exp: "category", "category.name == page.sub_category" | first %}
+
+                {% if page.isIndex %}
+                    {% if page.sub_category %}
+                        <a href="{{ site.baseurl }}{{ pageCategory.path }}">{{ page.category }}</a>
+                    {% else %}
+                        <a href="{{ site.baseurl }}/">{{ site.title }}</a>
+                    {% endif %}
+                {% else %}
+                    <!-- Get the length of the page.category string so we can hide the category link on the welcome page -->
+                    {% capture categorySize %}{{ page.category | size }}{% endcapture %}
+
+                    {% if categorySize %}<a href="{{ site.baseurl }}{{ pageCategory.path }}">{{ page.category }}</a>{% else %}<a href="{{ site.baseurl }}">{{ site.title }}</a>{% endif %}
+                    {% if page.sub_category %} / <a href="{{ site.baseurl }}{{ pageSubCategory.path }}">{{ page.sub_category }}</a>{% endif %}
+                {% endif %}
+            </h2>
             <h3>{{ page.title }}</h3>
         </div>
         <article class="content">
@@ -78,7 +123,7 @@
 
         <footer class="footer">
             <div class="content">
-                <section class="copyright">DuckDuckGo © 2022</section>
+                <section class="copyright" id="copyright">DuckDuckGo</section>
                 <div class="footer__nav">
                     <a href="https://duckduckgo.com/" target="_blank">Search</a>
                     <span class="footer__nav__sep"></span>
@@ -97,7 +142,9 @@
         document.getElementById("open-nav").addEventListener("click", function () {
             document.body.classList.toggle("nav-open");
         });
+        document.getElementById("copyright").innerHTML = `DuckDuckGo © ${new Date().getFullYear()}`;
     </script>
+    <script src="{{ site.baseurl }}/scripts/pixels.js"></script>
 </body>
 
 </html>

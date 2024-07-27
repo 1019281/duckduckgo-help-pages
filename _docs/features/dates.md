@@ -1,7 +1,9 @@
 ---
-title: Dates
-category: Features
-order: 716
+title: How To Sort DuckDuckGo Search Results by Date
+nav_title: Sort Results by Date
+description: Learn how to use advanced sorting features on DuckDuckGo Private Search to get the search results you want.
+category: Search Results
+order: 500
 ---
 
 <p>
@@ -30,7 +32,7 @@ order: 716
 </p>
 
 <p>
-    <img src="{{ site.baseurl }}/images/0a871252f673b9a88eebad5b9f7b5ee8.png" />
+    <img src="{{ site.baseurl }}/images/dates.png" />
 </p>
 
 <p>

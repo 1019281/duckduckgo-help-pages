@@ -1,7 +1,9 @@
 ---
-title: Safe Search
-category: Features
-order: 721
+title: How To Use the Safe Search Setting To Adjust Adult Content in DuckDuckGo Search Results
+nav_title: Safe Search
+description: Learn how to use advanced filtering features on DuckDuckGo Private Search to get the search results you want.
+category: Search Results
+order: 600
 ---
 
 <p>
@@ -29,7 +31,7 @@ order: 721
     </li>
 </ul>
 <p>
-    <img alt="Screenshot showing safe search option below the search box." src="{{ site.baseurl }}/images/3ef517567542255d5cbd61f132f07e5e.png" />
+    <img alt="Screenshot showing safe search option below the search box." src="{{ site.baseurl }}/images/safe-search.png" />
 </p>
 <p>
     For more technical users, if you want to force safe search on (or off) you

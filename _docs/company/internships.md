@@ -1,7 +1,8 @@
 ---
-title: Internships
-category: Company
-order: 99
+title: Does DuckDuckGo offer internships?
+description: DuckDuckGo is an independent internet privacy company that offers a private alternative to Google search & Chrome in one free app.
+category: About DuckDuckGo
+order: 500
 ---
 
 <p>
